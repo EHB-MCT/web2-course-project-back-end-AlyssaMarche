@@ -24,13 +24,12 @@ async function connectDB() {
 	try {
 		await client.connect();
 		console.log("Connected to MongoDB!");
-		
+
 		db = client.db("courseproject-web2-2526"); // Change to your database name
 		commentsCollection = db.collection("comments");
-		
+
 		// Optional: Create an index on username for faster queries
 		await commentsCollection.createIndex({ user: 1 });
-		
 	} catch (error) {
 		console.error("MongoDB connection error:", error);
 		process.exit(1);
@@ -46,12 +45,6 @@ app.use(cors());
 app.use(express.static("public"));
 app.use(express.json()); //alle data van en naar de api is uniek
 
-connectDB().then(() => {
-	app.listen(port, () => {
-		console.log(`Example app listening on port ${port}`);
-	});
-});
-
 // app.listen(port, () => {
 // 	console.log(`Example app listening on port ${port}`);
 // });
@@ -66,45 +59,45 @@ app.use(express.static("public"));
 
 app.get("/api/comments", async (req, res) => {
 	//To get individually each id of the comments
-    try {
-	let id = req.query.id;
-    if (id) {
-        //Get one comments by id
-        const comment = await commentsCollection.findOne({
-             _id: new ObjectId(id) 
-            });
-            if (!comment) {
-                return res.status(404).json({ error: "Comment not found" });
-            }
-            return res.json(comment);
-    }
-	//Get all comments
-	const comments = await commentsCollection.find({}).toArray();
-    res.json(comments);
-} catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch comments" });
-}
+	try {
+		let id = req.query.id;
+		if (id) {
+			//Get one comments by id
+			const comment = await commentsCollection.findOne({
+				_id: new ObjectId(id),
+			});
+			if (!comment) {
+				return res.status(404).json({ error: "Comment not found" });
+			}
+			return res.json(comment);
+		}
+		//Get all comments
+		const comments = await commentsCollection.find().toArray();
+		res.json(comments);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: "Failed to fetch comments" });
+	}
 });
 
 app.post("/api/comments", async (req, res) => {
 	//Request the body so you can post a new comment via a body
-    try {
-	let data = req.body;
+	try {
+		let data = req.body;
 
-    const result = await commentsCollection.insertOne(data);
+		const result = await commentsCollection.insertOne(data);
 
-    console.log("Inserted comment:", result.insertId);
-    
-    res.status(201).json({
-        message: "Succes",
-        id: result.insertedId,
-        comment: data
-    });
-    }catch(error){
-        console.error(error);
-        res.status(500).json({ error: "Failed to create comment" });
-    }
+		console.log("Inserted comment:", result.insertId);
+
+		res.status(201).json({
+			message: "Succes",
+			id: result.insertedId,
+			comment: data,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: "Failed to create comment" });
+	}
 });
 
 app.delete("/api/comments", async (req, res) => {
@@ -115,22 +108,28 @@ app.delete("/api/comments", async (req, res) => {
 		if (!username) {
 			return res.status(400).json({ error: "Username is required" });
 		}
-        	const allComments = await commentsCollection.find({}).toArray();
+		const allComments = await commentsCollection.find().toArray();
 		console.log("All comments:", JSON.stringify(allComments, null, 2));
-        
+
 		//Read the comments file
 		const result = await commentsCollection.findOneAndDelete({
-            user: username
-        });
-        if (!result) {
-            return res.status(404).json({ error: "Comment not found" });
-        }
-        res.json({
-            message: "Comment deleted successfully",
-            deletedComment: result
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Failed to delete comment" });
-    }
+			user: username,
+		});
+		if (!result) {
+			return res.status(404).json({ error: "Comment not found" });
+		}
+		res.json({
+			message: "Comment deleted successfully",
+			deletedComment: result,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: "Failed to delete comment" });
+	}
+});
+
+connectDB().then(() => {
+	app.listen(port, () => {
+		console.log(`Example app listening on port ${port}`);
+	});
 });
