@@ -49,13 +49,24 @@ app.use(express.json()); //alle data van en naar de api is uniek
 // 	console.log(`Example app listening on port ${port}`);
 // });
 
-app.use(express.static("public"));
-
 // app.get("/api/comments", async (req, res) => {
 // 	const contents = await readFile("comments.json", { encoding: "utf8" });
 // 	const data = JSON.parse(contents);
 // 	res.json(data);
 // });
+
+app.get("/", (req, res) => {
+	res.json({
+		message: "Comments API is running",
+		status: "ok",
+		endpoints: {
+			getComments: "GET /api/comments",
+			getCommentById: "GET /api/comments?id={id}",
+			createComment: "POST /api/comments",
+			deleteComment: "DELETE /api/comments?user={username}"
+		}
+	});
+});
 
 app.get("/api/comments", async (req, res) => {
 	//To get individually each id of the comments
@@ -90,7 +101,7 @@ app.post("/api/comments", async (req, res) => {
 		console.log("Inserted comment:", result.insertId);
 
 		res.status(201).json({
-			message: "Succes",
+			message: "Success",
 			id: result.insertedId,
 			comment: data,
 		});
