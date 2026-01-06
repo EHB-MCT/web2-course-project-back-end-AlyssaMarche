@@ -68,7 +68,7 @@ app.get("/", (req, res) => {
 	});
 });
 
-app.get("/api/comments", async (req, res) => {
+app.get("/comments", async (req, res) => {
 	//To get individually each id of the comments
 	try {
 		let id = req.query.id;
@@ -91,7 +91,7 @@ app.get("/api/comments", async (req, res) => {
 	}
 });
 
-app.post("/api/comments", async (req, res) => {
+app.post("/comments", async (req, res) => {
 	//Request the body so you can post a new comment via a body
 	try {
 		let data = req.body;
@@ -111,7 +111,7 @@ app.post("/api/comments", async (req, res) => {
 	}
 });
 
-app.delete("/api/comments", async (req, res) => {
+app.delete("/comments", async (req, res) => {
 	//This will delete a comment based on the username if not found it will return error messages
 	try {
 		let username = req.query.user;
