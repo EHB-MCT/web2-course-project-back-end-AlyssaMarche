@@ -111,10 +111,10 @@ app.post("/comments", async (req, res) => {
 	}
 });
 
-app.delete("/comments", async (req, res) => {
+app.delete("/comments/:id", async (req, res) => {
 	//This will delete a comment based on the username if not found it will return error messages
 	try {
-		let id = req.query.id;
+		let id = req.params.id;
 
 		if (!id) {
 			return res.status(400).json({ error: "Username is required" });
