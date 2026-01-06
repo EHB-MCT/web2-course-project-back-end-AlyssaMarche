@@ -9,3 +9,7 @@ http://localhost:5173/ not sure about this one.
 The first part of the code are from the courses or monitoraat 
 The delete part came from Claude: https://claude.ai/share/2ab8e917-1ecb-4321-8824-f57386dc6abe
 
+Rik Baselier -> helped me fix some error in my delete part 
+app.delete("/comments/:id", async (req, res) => {})
+	
+		let id = req.params.id;
