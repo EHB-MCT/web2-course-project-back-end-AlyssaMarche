@@ -114,9 +114,9 @@ app.post("/comments", async (req, res) => {
 app.delete("/comments", async (req, res) => {
 	//This will delete a comment based on the username if not found it will return error messages
 	try {
-		let username = req.query.user;
+		let id = req.query.id;
 
-		if (!username) {
+		if (!id) {
 			return res.status(400).json({ error: "Username is required" });
 		}
 		const allComments = await commentsCollection.find().toArray();
@@ -124,7 +124,7 @@ app.delete("/comments", async (req, res) => {
 
 		//Read the comments file
 		const result = await commentsCollection.findOneAndDelete({
-			user: username,
+			_id: new ObjectId(id),
 		});
 		if (!result) {
 			return res.status(404).json({ error: "Comment not found" });
